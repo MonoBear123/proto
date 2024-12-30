@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package predictor;
+option go_package = "github.com/MonoBear123/proto/gen/predict;predict";
+
+service StonksPredictor {
+  rpc Predictor (PredictorRequest) returns (PredictorResponse);
+}
+
+message PredictorRequest {
+  string query = 1;
+}
+
+message PredictorResponse {
+  repeated float numbers = 1;
+}
