@@ -1,4 +1,4 @@
-module PredictorService
+module github.com/MonoBear123/proto
 
 go 1.23.1
 
