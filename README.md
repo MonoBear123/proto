@@ -16,7 +16,7 @@
 
 ### Убедитесь, что у вас установлен Docker и Docker Compose.
 
-Для установки Docker и Docker Compose следуйте официальным инструкциям:
+Для установки Docker и Docker Compose:
 
 - [Docker для Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
 - [Docker для macOS](https://docs.docker.com/desktop/setup/install/mac-install/)
