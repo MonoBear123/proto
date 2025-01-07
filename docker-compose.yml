@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  authDB:
+    image: postgres:15
+    container_name: auth_postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: authdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./auth/storage:/var/lib/postgresql/data
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "42022:42022"
+    depends_on:
+      - authDB
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth
+      - predictor
+  predictor:
+    build:
+      context: ./predictor
+      dockerfile: Dockerfile
+    container_name: predictor_service
+    ports:
+      - "42020:42020"
+
+
+
+
+
+
+

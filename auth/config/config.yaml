@@ -1,0 +1,10 @@
+
+token_ttl: 1h
+storage:
+  port: 5432
+  user: user
+  password: password
+  name: authdb
+grpc:
+  port: 42022
+  timeout: 2m
