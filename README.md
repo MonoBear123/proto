@@ -18,9 +18,9 @@
 
 Для установки Docker и Docker Compose следуйте официальным инструкциям:
 
-- Docker для Windows
-- Docker для macOS
-- Docker для Linux
+- [Docker для Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- [Docker для macOS](https://docs.docker.com/desktop/setup/install/mac-install/)
+- [Docker для Linux](https://docs.docker.com/engine/install/)
 
 ## Запуск проекта
 
