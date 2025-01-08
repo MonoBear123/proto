@@ -11,7 +11,7 @@ import (
 type Config struct {
 	Storage  Storage       `yaml:"storage"`
 	TokenTTL time.Duration `yaml:"token_ttl"`
-	GRPC     GRPCConfig    `yaml:"grpc"`
+	GRPC     GRPCConfig    `yaml:"proto_gen"`
 }
 type Storage struct {
 	Port     int    `yaml:"port"`

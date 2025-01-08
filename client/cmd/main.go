@@ -9,7 +9,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-// main сборка и запуск клиент сервера.
 func main() {
 
 	router := echo.New()
@@ -18,9 +17,7 @@ func main() {
 	authGRPC := grpcAuth.New("auth_service:42022")
 	// Инициализация клиента gRPC-сервиса предсказаний.
 	predictGRPC := grpcPredict.New("predictor_service:42020")
-	// Создание обработчиков для маршрутов, связанных с аутентификацией.
 	aHandler := authHandler.New(authGRPC)
-	// Создание обработчиков для маршрутов, связанных с предсказаниями.
 	pHandler := predictHandler.New(predictGRPC)
 
 	// Определение маршрутов и их привязка к обработчикам.

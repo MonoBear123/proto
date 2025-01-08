@@ -1,9 +1,8 @@
 from concurrent import futures
 import logging
 import grpc
-from grpc import predict_pb2
-from grpc import predict_pb2_grpc
-from models.ModelTrainer import ModelTrainer
+from proto_gen.predict import predict_pb2
+from proto_gen.predict import predict_pb2_grpc
 
 class StonksPredictorServicer(predict_pb2_grpc.StonksPredictorServicer):
     def Predictor(self, request, context) -> predict_pb2.PredictorResponse():
@@ -13,7 +12,7 @@ class StonksPredictorServicer(predict_pb2_grpc.StonksPredictorServicer):
 
 
 def main() -> None:
-    # Создание и настройка grpc сервера
+    # Создание и настройка proto_gen сервера
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5))
 
     # Регистрирация сервера, добавляя обработчик для gRPC

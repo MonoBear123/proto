@@ -17,22 +17,22 @@ except ImportError:
 
 if _version_not_supported:
     raise RuntimeError(
-        f'The grpc package installed is at version {GRPC_VERSION},'
+        f'The proto_gen package installed is at version {GRPC_VERSION},'
         + f' but the generated code in predict/predict_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
-        + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
+        + f' Please upgrade your proto_gen module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
 class StonksPredictorStub(object):
-    """Missing associated documentation comment in .grpc file."""
+    """Missing associated documentation comment in .proto_gen file."""
 
     def __init__(self, channel):
         """Constructor.
 
         Args:
-            channel: A grpc.Channel.
+            channel: A proto_gen.Channel.
         """
         self.Predictor = channel.unary_unary(
                 '/predictor.StonksPredictor/Predictor',
@@ -42,10 +42,10 @@ class StonksPredictorStub(object):
 
 
 class StonksPredictorServicer(object):
-    """Missing associated documentation comment in .grpc file."""
+    """Missing associated documentation comment in .proto_gen file."""
 
     def Predictor(self, request, context):
-        """Missing associated documentation comment in .grpc file."""
+        """Missing associated documentation comment in .proto_gen file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -67,7 +67,7 @@ def add_StonksPredictorServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class StonksPredictor(object):
-    """Missing associated documentation comment in .grpc file."""
+    """Missing associated documentation comment in .proto_gen file."""
 
     @staticmethod
     def Predictor(request,
