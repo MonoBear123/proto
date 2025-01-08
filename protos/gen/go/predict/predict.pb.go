@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.1
 // 	protoc        v5.26.1
-// source: predict/predict.proto
+// source: predict/predict.grpc
 
 package predict
 

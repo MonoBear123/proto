@@ -26,7 +26,7 @@ if _version_not_supported:
 
 
 class StonksPredictorStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Missing associated documentation comment in .grpc file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -42,10 +42,10 @@ class StonksPredictorStub(object):
 
 
 class StonksPredictorServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Missing associated documentation comment in .grpc file."""
 
     def Predictor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Missing associated documentation comment in .grpc file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -67,7 +67,7 @@ def add_StonksPredictorServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class StonksPredictor(object):
-    """Missing associated documentation comment in .proto file."""
+    """Missing associated documentation comment in .grpc file."""
 
     @staticmethod
     def Predictor(request,
