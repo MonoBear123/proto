@@ -7,7 +7,42 @@ option go_package = "github.com/MonoBear123/PredictorServices/protos/gen/auth;au
 service Auth {
   rpc Register (RegisterRequest) returns (RegisterResponse);
   rpc Login (LoginRequest) returns (LoginResponse);
+  rpc ForgotPassword (ForgotPasswordRequest) returns (ForgotPasswordResponse);
+  rpc ResetPasword (ResetPasswordRequest) returns (ResetPasswordResponse);
+  rpc ActiveAccount (ActiveAccountRequest) returns (ActiveAccountResponse);
 }
+
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+
+
+message ForgotPasswordResponse {
+  string message = 1;
+}
+
+
+message ResetPasswordRequest {
+  string password = 1;
+}
+
+
+message ResetPasswordResponse {
+  string message = 1;
+}
+
+
+message ActiveAccountRequest {
+  string token = 1;
+}
+
+
+
+message ActiveAccountResponse {
+  string  message = 1;
+}
+
 
 message RegisterRequest {
   string email = 1;
