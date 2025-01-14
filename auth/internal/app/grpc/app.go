@@ -1,9 +1,8 @@
-// Пакет для инициализации и звпуска  gRPC сервера.
-// Включает в себя создание сервера, запуск, а также его завершение.
 package grpcApp
 
 import (
 	authgrpc "auth/internal/grpc/auth"
+	"auth/internal/grpc/managerAccount"
 	"fmt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -16,18 +15,10 @@ type GRPC struct {
 	port       int
 }
 
-// New - конструктор для создания нового gRPC сервера.
-//
-// Параметры:
-//   - log: Логгер для записи информации о сервере.
-//   - authServ: Экземпляр службы аутентификации для регистрации на сервере.
-//   - port: Порт для прослушивания gRPC сервера.
-//
-// Возвращает:
-//   - Указатель на структуру GRPC с инициализированным сервером.
-func New(log *zap.Logger, authServ authgrpc.AuthService, port int) *GRPC {
+func New(log *zap.Logger, authServ authgrpc.AuthService, accountManager managerAccount.AccountManagerService, port int) *GRPC {
 	gRPCServer := grpc.NewServer()
 	authgrpc.Register(gRPCServer, authServ)
+	managerAccount.Register(gRPCServer, accountManager)
 	return &GRPC{
 		log:        log,
 		gRPCServer: gRPCServer,
@@ -35,16 +26,12 @@ func New(log *zap.Logger, authServ authgrpc.AuthService, port int) *GRPC {
 	}
 }
 
-// MustRun - вызывает функцию Run.
-// При возникновении ошибки вызывается panic.
 func (g *GRPC) MustRun() {
 	if err := g.Run(); err != nil {
 		panic(err)
 	}
 }
 
-// Run - запускает gRPC сервер.
-// Использует для запуска порт, который был передан при создании структуры GRPC.
 func (g *GRPC) Run() error {
 	const op = "grpcApp.Run"
 	log := g.log.With(zap.String("op", op), zap.Int("port", g.port))
@@ -63,11 +50,10 @@ func (g *GRPC) Run() error {
 	return nil
 }
 
-// Stop - останавливает gRPC сервер с использованием graceful shutdown.
 func (g *GRPC) Stop() {
 	const op = "grpcApp.Stop"
 	log := g.log.With(zap.String("op", op))
 	log.Info("stopping gRPC server")
 
-	g.gRPCServer.GracefulStop() //  GracefulStop позволяет корректно завершить все активные соединения.
+	g.gRPCServer.GracefulStop()
 }

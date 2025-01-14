@@ -22,7 +22,6 @@ type PredictClient struct {
 //
 // В случае невозможности установить соединение вызывается panic().
 func New(address string) *PredictClient {
-	// Создание контекста с таймаутом для попытки подключения.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -38,8 +37,8 @@ func New(address string) *PredictClient {
 // Возвращает:
 //   - []float32: список предсказанных чисел.
 //   - error: ошибка в случае неудачного запроса.
-func (p *PredictClient) GetPrediction() ([]float32, error) {
-	res, err := p.client.Predictor(context.Background(), &predict.PredictorRequest{Query: ""})
+func (p *PredictClient) GetPrediction(secid string) ([]float32, error) {
+	res, err := p.client.Predictor(context.Background(), &predict.PredictorRequest{Query: secid})
 	if err != nil {
 		return nil, err
 	}

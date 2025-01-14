@@ -26,8 +26,8 @@ func (p *PredictHandler) Predict(ctx echo.Context) error {
 	if err := parseJWT.ParseToken(cookie.Value); err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 	}
-
-	res, err := p.client.GetPrediction()
+	secid := ctx.FormValue("secid")
+	res, err := p.client.GetPrediction(secid)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}

@@ -1,9 +1,9 @@
-// Пакет для инициализации и запуска приложения, включающего gRPC сервер и хранилище данных.
 package app
 
 import (
 	grpcApp "auth/internal/app/grpc"
 	"auth/internal/services/auth"
+	"auth/internal/services/manageAccount"
 	"auth/internal/storage/postgres"
 	"go.uber.org/zap"
 	"time"
@@ -14,19 +14,6 @@ type App struct {
 	Storage    *postgres.Storage
 }
 
-// New - конструктор приложения, инициализирует компоненты приложения (gRPC сервер и хранилище).
-//
-// Параметры:
-//   - log: Логгер для записи событий приложения.
-//   - gRPCPort: Порт для gRPC сервера.
-//   - port: Порт для подключения к базе данных.
-//   - name: Имя базы данных.
-//   - user: Имя пользователя для подключения к базе данных.
-//   - password: Пароль для подключения к базе данных.
-//   - tokenTTL: Время жизни токенов авторизации.
-//
-// Возвращает:
-//   - Указатель на структуру App.
 func New(log *zap.Logger,
 	gRPCPort int,
 	port int,
@@ -35,7 +22,8 @@ func New(log *zap.Logger,
 ) *App {
 	storage := postgres.New(port, name, user, password)
 	authServ := auth.New(log, storage, tokenTTL)
-	GRPCApp := grpcApp.New(log, authServ, gRPCPort)
+	accountManagerSrv := managerAccount.New(log, storage)
+	GRPCApp := grpcApp.New(log, authServ, accountManagerSrv, gRPCPort)
 
 	return &App{
 		GRPCServer: GRPCApp,

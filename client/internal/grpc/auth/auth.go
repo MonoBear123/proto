@@ -1,4 +1,3 @@
-// Пакет grpcAuth предоставляет клиент для взаимодействия с gRPC-сервисом аутентификации.
 package grpcAuth
 
 import (
@@ -12,15 +11,6 @@ type AuthClient struct {
 	client auth.AuthClient
 }
 
-// New создает новый клиент AuthClient для подключения к gRPC-серверу аутентификации.
-//
-// Параметры:
-//   - address: строка, содержащая адрес сервера.
-//
-// Возвращает:
-//   - *AuthClient: клиент для взаимодействия с gRPC-сервисом.
-//
-// В случае невозможности установить соединение вызывается panic().
 func New(address string) *AuthClient {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -32,15 +22,6 @@ func New(address string) *AuthClient {
 	return &AuthClient{client: auth.NewAuthClient(client)}
 }
 
-// Register регистрирует нового пользователя.
-//
-// Параметры:
-//   - email: строка, содержащая email пользователя.
-//   - password: строка, содержащая пароль пользователя.
-//
-// Возвращает:
-//   - userID: уникальный идентификатор нового пользователя.
-//   - err: ошибка в случае неудачной регистрации.
 func (a *AuthClient) Register(email string, password string) (userID int64, err error) {
 	// Создание контекста с таймаутом для попытки подключения.
 	res, err := a.client.Register(context.Background(), &auth.RegisterRequest{
@@ -54,15 +35,6 @@ func (a *AuthClient) Register(email string, password string) (userID int64, err 
 	return res.UserId, nil
 }
 
-// Login выполняет вход пользователя и возвращает JWT-токен.
-//
-// Параметры:
-//   - email: строка, содержащая email пользователя.
-//   - password: строка, содержащая пароль пользователя.
-//
-// Возвращает:
-//   - token: строка, содержащая JWT-токен.
-//   - err: ошибка в случае неудачного логина.
 func (a *AuthClient) Login(email string, password string) (token string, err error) {
 	res, err := a.client.Login(context.Background(), &auth.LoginRequest{
 		Email:    email,
@@ -73,4 +45,35 @@ func (a *AuthClient) Login(email string, password string) (token string, err err
 
 	}
 	return res.Token, nil
+}
+
+func (a *AuthClient) ForgotPass(email string) error {
+	_, err := a.client.ForgotPassword(context.Background(), &auth.ForgotPasswordRequest{
+		Email: email,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AuthClient) ActivateAccount(token string) error {
+	_, err := a.client.ActiveAccount(context.Background(), &auth.ActiveAccountRequest{
+		Token: token,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AuthClient) ResetPassword(token, password string) error {
+	_, err := a.client.ResetPasword(context.Background(), &auth.ResetPasswordRequest{
+		Token:    token,
+		Password: password,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

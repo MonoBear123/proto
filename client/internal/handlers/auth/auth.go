@@ -4,8 +4,10 @@ package authHandler
 
 import (
 	"client/internal/grpc/auth"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"regexp"
 )
 
 type AuthHandler struct {
@@ -64,4 +66,59 @@ func (a *AuthHandler) Register(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return ctx.JSON(http.StatusOK, map[string]string{"uid": string(uid)})
+}
+
+func ValidateDate(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		email := ctx.FormValue("email")
+		password := ctx.FormValue("password")
+		if email == "" || password == "" {
+			return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Email and password are required"})
+		}
+
+		emailRegex := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$`
+		emailMatch, _ := regexp.MatchString(emailRegex, email)
+		if !emailMatch {
+			return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid email format"})
+		}
+
+		if len(password) < 8 {
+			return ctx.JSON(http.StatusBadRequest, map[string]string{"error": "Password must be at least 8 characters long"})
+		}
+
+		return next(ctx)
+	}
+}
+
+func (a *AuthHandler) ForgotPass(ctx echo.Context) error {
+	email := ctx.FormValue("email")
+
+	err := a.client.ForgotPass(email)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Пользователь не найден", err)})
+	}
+	return ctx.JSON(http.StatusOK, map[string]string{"message": "Письмо отправлено на почту"})
+
+}
+
+func (a *AuthHandler) ResetPass(ctx echo.Context) error {
+	password := ctx.FormValue("password")
+	token := ctx.QueryParam("token")
+	err := a.client.ResetPassword(token, password)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{"message": "Пароль изменен"})
+}
+
+func (a *AuthHandler) ActivateAccount(ctx echo.Context) error {
+	token := ctx.QueryParam("token")
+	err := a.client.ActivateAccount(token)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{"message": "Аккаунт активирован"})
+
 }

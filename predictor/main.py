@@ -4,6 +4,7 @@ import grpc
 from proto_gen.predict import predict_pb2
 from proto_gen.predict import predict_pb2_grpc
 
+
 class StonksPredictorServicer(predict_pb2_grpc.StonksPredictorServicer):
     def Predictor(self, request, context) -> predict_pb2.PredictorResponse():
         # Вот тут нужен вызов функции,которая возвращает предсказание в виде листа с данными

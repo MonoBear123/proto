@@ -5,6 +5,7 @@ import (
 	"client/internal/grpc/predict"
 	"client/internal/handlers/auth"
 	"client/internal/handlers/predict"
+	parser "client/internal/handlers/search"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -20,9 +21,12 @@ func main() {
 	aHandler := authHandler.New(authGRPC)
 	pHandler := predictHandler.New(predictGRPC)
 
-	// Определение маршрутов и их привязка к обработчикам.
-	router.GET("/predict", pHandler.Predict)
-	router.POST("/login", aHandler.Login)
-	router.POST("/register", aHandler.Register)
+	router.POST("/predict", pHandler.Predict)
+	router.POST("/login", aHandler.Login, authHandler.ValidateDate)
+	router.POST("/register", aHandler.Register, authHandler.ValidateDate)
+	router.GET("/search", parser.Search)
+	router.POST("/activate", aHandler.ActivateAccount)
+	router.POST("/forgot-password", aHandler.ForgotPass)
+	router.POST("/reset-password", aHandler.ResetPass)
 	router.Logger.Fatal(router.Start(":8080"))
 }

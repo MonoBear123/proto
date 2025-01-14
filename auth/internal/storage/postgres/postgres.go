@@ -1,4 +1,3 @@
-// Пакет postgres реализует взаимодействие с базой данных PostgreSQL для работы с пользователями.
 package postgres
 
 import (
@@ -13,22 +12,25 @@ type Storage struct {
 	db *pgx.Conn
 }
 
-func (s *Storage) UpdateUser(ctx context.Context, user models.User) (err error) {
-	//TODO implement me
-	return
+func (s *Storage) UpdatePassword(ctx context.Context, userID int64, password []byte) error {
+	const op = "storage.postgres.UpdatePassword"
+	err := s.db.QueryRowEx(ctx, "UPDATE users SET password = $1 WHERE id = $2;", nil, password, userID).Scan()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }
 
-// SaveUser сохраняет нового пользователя в хранилище.
-// Принимает:
-//   - ctx: контекст для управления запросом и его отмены.
-//   - email: email пользователя (уникальное значение).
-//   - passHash: хеш пароля пользователя.
-//
-// Возвращает:
-//   - uid: ID созданного пользователя.
-//   - err: ошибка, если сохранение пользователя не удалось.
-//   - storage.ErrUserExists: пользователь с указанным email уже существует.
-//   - Другие ошибки, связанные с запросом в базу данных.
+func (s *Storage) ActiveAccount(ctx context.Context, userID int64) error {
+	const op = "storage.postgres.ActiveAccount"
+	err := s.db.QueryRowEx(ctx, "UPDATE users SET activateAccount = $1 WHERE id = $2;", nil, true, userID).Scan()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
+}
+
 func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (uid int64, err error) {
 	const op = "storage.postgres.SaveUser"
 	var existingUser int
@@ -40,6 +42,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 	if err == nil {
 		return 0, fmt.Errorf("user already exists: %w", storage.ErrUserExists)
 	} else if err != pgx.ErrNoRows {
+
 		return 0, fmt.Errorf("error checking for existing user: %w", err)
 	}
 	err = s.db.QueryRowEx(
@@ -53,24 +56,14 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 	return uid, nil
 }
 
-// ProvideUser извлекает данные пользователя.
-// Принимает:
-//   - ctx: контекст для управления запросом и его отмены.
-//   - email: email пользователя, данные которого нужно извлечь.
-//
-// Возвращает:
-//   - user: структура модели пользователя, содержащая данные из хранилища.
-//   - err: ошибка, если извлечение данных не удалось.
-//   - pgx.ErrNoRows: пользователь с указанным email не найден.
-//   - Другие ошибки, связанные с запросом в базу данных.
 func (s *Storage) ProvideUser(ctx context.Context, email string) (user models.User, err error) {
 	const op = "storage.postgres.ProvideUser"
 
 	err = s.db.QueryRowEx(
 		ctx,
-		"SELECT id, email, passHash FROM users WHERE email = $1", nil,
+		"SELECT id, email, passHash,activateAccount FROM users WHERE email = $1", nil,
 		email,
-	).Scan(&user.ID, &user.Email, &user.PassHash)
+	).Scan(&user.ID, &user.Email, &user.PassHash, &user.ActiveAccount)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return models.User{}, fmt.Errorf("%s: user not found: %w", op, err)
@@ -81,17 +74,6 @@ func (s *Storage) ProvideUser(ctx context.Context, email string) (user models.Us
 	return user, nil
 }
 
-// New создает новое подключение к базе данных PostgreSQL и инициализирует таблицу пользователей.
-// Принимает:
-//   - port: порт для подключения к базе данных.
-//   - name: имя базы данных.
-//   - user: имя пользователя для подключения.
-//   - password: пароль для подключения.
-//
-// Возвращает:
-//   - указатель на структуру Storage.
-//
-// В случае ошибки подключения или создания таблицы вызывает panic().
 func New(port int, name, user, password string) *Storage {
 	connConf := pgx.ConnConfig{
 		Host:     "authDB",
@@ -109,7 +91,8 @@ func New(port int, name, user, password string) *Storage {
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
-        passHash BYTEA NOT NULL
+        passHash BYTEA NOT NULL,
+        activateAccount BOOLEAN DEFAULT FALSE
     );
 `
 	_, err = conn.Exec(createTableSQL)
@@ -121,8 +104,6 @@ func New(port int, name, user, password string) *Storage {
 
 }
 
-// Close закрывает подключение к базе данных.
-// В случае ошибки подключения или создания таблицы вызывает panic().
 func (s *Storage) Close() {
 	if err := s.db.Close(); err != nil {
 		panic("Failed to close database")
