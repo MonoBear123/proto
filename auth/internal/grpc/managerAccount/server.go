@@ -2,7 +2,7 @@ package managerAccount
 
 import (
 	"context"
-	"github.com/MonoBear123/proto/protos/gen/go/auth"
+	manage "github.com/MonoBear123/proto/protos/gen/go/auth"
 	"google.golang.org/grpc"
 )
 
@@ -12,26 +12,26 @@ type AccountManagerService interface {
 	ForgotPassword(ctx context.Context, email string) (err error)
 }
 type serverAPI struct {
-	auth.UnimplementedAuthServer
+	manage.UnimplementedAccountManagerServer
 	accountManagerSrv AccountManagerService
 }
 
 func Register(gRPC *grpc.Server, accountManagerSrv AccountManagerService) {
-	auth.RegisterAuthServer(gRPC, &serverAPI{accountManagerSrv: accountManagerSrv})
+	manage.RegisterAccountManagerServer(gRPC, &serverAPI{accountManagerSrv: accountManagerSrv})
 }
 
-func (s *serverAPI) ForgotPassword(ctx context.Context, in *auth.ForgotPasswordRequest) (*auth.ForgotPasswordResponse, error) {
+func (s *serverAPI) ForgotPassword(ctx context.Context, in *manage.ForgotPasswordRequest) (*manage.ForgotPasswordResponse, error) {
 	email := in.GetEmail()
 	err := s.accountManagerSrv.ForgotPassword(ctx, email)
 	if err != nil {
 		return nil, err
 	}
-	return &auth.ForgotPasswordResponse{
+	return &manage.ForgotPasswordResponse{
 		Message: "email send",
 	}, nil
 }
 
-func (s *serverAPI) ResetPassword(ctx context.Context, in *auth.ResetPasswordRequest) (*auth.ResetPasswordResponse, error) {
+func (s *serverAPI) ResetPassword(ctx context.Context, in *manage.ResetPasswordRequest) (*manage.ResetPasswordResponse, error) {
 	password := in.GetPassword()
 	token := in.GetToken()
 	err := s.accountManagerSrv.ResetPassword(ctx, token, password)
@@ -39,17 +39,17 @@ func (s *serverAPI) ResetPassword(ctx context.Context, in *auth.ResetPasswordReq
 
 		return nil, err
 	}
-	return &auth.ResetPasswordResponse{
+	return &manage.ResetPasswordResponse{
 		Message: "password reset",
 	}, nil
 }
 
-func (s *serverAPI) ActiveAccount(ctx context.Context, in *auth.ActiveAccountRequest) (*auth.ActiveAccountResponse, error) {
+func (s *serverAPI) ActiveAccount(ctx context.Context, in *manage.ActiveAccountRequest) (*manage.ActiveAccountResponse, error) {
 	token := in.GetToken()
 	err := s.accountManagerSrv.ActiveAccount(ctx, token)
 	if err != nil {
 		return nil, err
 	}
-	return &auth.ActiveAccountResponse{Message: "account activated"}, nil
+	return &manage.ActiveAccountResponse{Message: "account activated"}, nil
 
 }

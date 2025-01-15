@@ -3,7 +3,7 @@ module auth
 go 1.23.1
 
 require (
-	github.com/MonoBear123/proto v0.0.10
+	github.com/MonoBear123/proto v0.0.11
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx v3.6.2+incompatible

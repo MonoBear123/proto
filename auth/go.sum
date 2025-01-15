@@ -1,7 +1,7 @@
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
-github.com/MonoBear123/proto v0.0.10 h1:75zY8/Oazonamv8yQ3QC5GA77CN7xxtUd/Fb9dcVe14=
-github.com/MonoBear123/proto v0.0.10/go.mod h1:AOoyF1Be8F1TlGDmiHJdSmzOvwmfPDzwdP2gku2/ZWY=
+github.com/MonoBear123/proto v0.0.11 h1:+JfNWONTIImLReCZuWLtvUhi0CRDuTcKABKS/WuCQso=
+github.com/MonoBear123/proto v0.0.11/go.mod h1:TSIACbBDDUbQrhlOHR7XzldXYj7Y8rPEgtuT4olzBPs=
 github.com/cockroachdb/apd v1.1.0 h1:3LFP3629v+1aKXU5Q37mxmRxX/pIu1nijXydLShEq5I=
 github.com/cockroachdb/apd v1.1.0/go.mod h1:8Sl8LxpKi29FqWXR16WEFZRNSz3SoPzUzeMeY4+DwBQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
