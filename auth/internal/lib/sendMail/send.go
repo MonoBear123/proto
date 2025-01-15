@@ -14,7 +14,7 @@ var (
   </head>
   <body>
     <p>Здравствуйте!</p>
-    <p>Спасибо за регистрацию на нашем сервисе. Для активации вашего аккаунта, пожалуйста, перейдите по следующей <a href="https://%s/activate?token=%s">ссылке</a>.</p>
+    <p>Спасибо за регистрацию на нашем сервисе. Для активации вашего аккаунта, пожалуйста, перейдите по следующей <a href="http://%s/activate?token=%s">ссылке</a>.</p>
     <p>Команда вашего сервиса.</p>
   </body>
   </html>`,
@@ -25,7 +25,7 @@ var (
   </head>
   <body>
     <p>Здравствуйте!</p>
-    <p>Если вы забыли пароль, вы можете сбросить его, перейдя по следующей <a href="https://%s/reset-password?token=%s">ссылке</a>.</p>
+    <p>Если вы забыли пароль, вы можете сбросить его, перейдя по следующей <a href="http://%s/reset-password?token=%s">ссылке</a>.</p>
     <p>Команда вашего сервиса.</p>
   </body>
   </html>`,
@@ -35,12 +35,12 @@ var (
 func SendMessagee(email, subject, token string) error {
 	body := CreateBody(subject, token)
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", "predictor.service@yandex.ru")
+	msg.SetHeader("From", "predict.service@mail.ru")
 	msg.SetHeader("To", email)
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body)
 
-	n := gomail.NewDialer("smtp.yandex.ru", 587, "predictor.service@yandex.ru", "cbbpgdyjwuypsfsf")
+	n := gomail.NewDialer("smtp.mail.ru", 587, "predict.service@mail.ru", "2KRFNX49efzQ9z5r4cjQ")
 
 	// Send the email
 	if err := n.DialAndSend(msg); err != nil {

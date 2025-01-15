@@ -3,7 +3,7 @@ module client
 go 1.23.1
 
 require (
-	github.com/MonoBear123/proto v0.0.10
+	github.com/MonoBear123/proto v0.0.11
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/labstack/echo/v4 v4.13.3
 	google.golang.org/grpc v1.69.2

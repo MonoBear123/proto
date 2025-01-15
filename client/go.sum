@@ -1,5 +1,5 @@
-github.com/MonoBear123/proto v0.0.10 h1:75zY8/Oazonamv8yQ3QC5GA77CN7xxtUd/Fb9dcVe14=
-github.com/MonoBear123/proto v0.0.10/go.mod h1:AOoyF1Be8F1TlGDmiHJdSmzOvwmfPDzwdP2gku2/ZWY=
+github.com/MonoBear123/proto v0.0.11 h1:+JfNWONTIImLReCZuWLtvUhi0CRDuTcKABKS/WuCQso=
+github.com/MonoBear123/proto v0.0.11/go.mod h1:TSIACbBDDUbQrhlOHR7XzldXYj7Y8rPEgtuT4olzBPs=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-logr/logr v1.4.2 h1:6pFjapn8bFcIbiKo3XT4j/BhANplGihG6tvd+8rYgrY=

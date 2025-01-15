@@ -14,7 +14,7 @@ type Storage struct {
 
 func (s *Storage) UpdatePassword(ctx context.Context, userID int64, password []byte) error {
 	const op = "storage.postgres.UpdatePassword"
-	err := s.db.QueryRowEx(ctx, "UPDATE users SET password = $1 WHERE id = $2;", nil, password, userID).Scan()
+	_, err := s.db.ExecEx(ctx, "UPDATE users SET passHash = $1 WHERE id = $2;", nil, password, userID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -24,10 +24,12 @@ func (s *Storage) UpdatePassword(ctx context.Context, userID int64, password []b
 
 func (s *Storage) ActiveAccount(ctx context.Context, userID int64) error {
 	const op = "storage.postgres.ActiveAccount"
-	err := s.db.QueryRowEx(ctx, "UPDATE users SET activateAccount = $1 WHERE id = $2;", nil, true, userID).Scan()
+	query := "UPDATE users SET activateAccount = $1 WHERE id = $2;"
+	_, err := s.db.ExecEx(ctx, query, nil, true, userID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
+
 	return nil
 }
 
@@ -99,7 +101,6 @@ func New(port int, name, user, password string) *Storage {
 	if err != nil {
 		panic(fmt.Errorf("Failed to create table:%w", err))
 	}
-
 	return &Storage{db: conn}
 
 }

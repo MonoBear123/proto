@@ -31,7 +31,7 @@ func (s *serverAPI) ForgotPassword(ctx context.Context, in *manage.ForgotPasswor
 	}, nil
 }
 
-func (s *serverAPI) ResetPassword(ctx context.Context, in *manage.ResetPasswordRequest) (*manage.ResetPasswordResponse, error) {
+func (s *serverAPI) ResetPasword(ctx context.Context, in *manage.ResetPasswordRequest) (*manage.ResetPasswordResponse, error) {
 	password := in.GetPassword()
 	token := in.GetToken()
 	err := s.accountManagerSrv.ResetPassword(ctx, token, password)
