@@ -12,15 +12,6 @@ type PredictClient struct {
 	client predict.StonksPredictorClient
 }
 
-// New создает новый клиент PredictClient для подключения к gRPC-серверу предсказаний.
-//
-// Параметры:
-//   - address: строка, содержащая адрес сервера (например, "localhost:50052").
-//
-// Возвращает:
-//   - *PredictClient: клиент для взаимодействия с gRPC-сервисом.
-//
-// В случае невозможности установить соединение вызывается panic().
 func New(address string) *PredictClient {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -32,11 +23,6 @@ func New(address string) *PredictClient {
 	return &PredictClient{predict.NewStonksPredictorClient(client)}
 }
 
-// GetPrediction отправляет запрос на предсказание и возвращает результат.
-//
-// Возвращает:
-//   - []float32: список предсказанных чисел.
-//   - error: ошибка в случае неудачного запроса.
 func (p *PredictClient) GetPrediction(secid string) ([]float32, error) {
 	res, err := p.client.Predictor(context.Background(), &predict.PredictorRequest{Query: secid})
 	if err != nil {

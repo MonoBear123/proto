@@ -9,12 +9,9 @@ import (
 	"syscall"
 )
 
-// main сборка и запуск сервиса авторизации
 func main() {
-	// Чтение конфига
 	cfg := config.MustLoadConfig()
 
-	// Создание объекта для логгирования
 	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
 
@@ -25,10 +22,8 @@ func main() {
 	go application.GRPCServer.MustRun()
 
 	logger.Info("application is started")
-	// Канал для отслеживания сигналов о завершения работы сервиса
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	// Ожидания сигнала в канале
 	<-stop
 
 	application.GRPCServer.Stop()

@@ -42,7 +42,6 @@ func SendMessagee(email, subject, token string) error {
 
 	n := gomail.NewDialer("smtp.mail.ru", 587, "predict.service@mail.ru", "2KRFNX49efzQ9z5r4cjQ")
 
-	// Send the email
 	if err := n.DialAndSend(msg); err != nil {
 		return err
 	}

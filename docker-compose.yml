@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  app_network:
+    driver: bridge
+
 services:
   authDB:
     image: postgres:15
@@ -12,6 +16,23 @@ services:
       - "5432:5432"
     volumes:
       - ./auth/storage:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  predictDB:
+    image: postgres:15
+    container_name: predict_postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: predictdb
+    ports:
+      - "5440:5440"
+    volumes:
+      - ./predictor/storage:/var/lib/postgresql/data
+    networks:
+      - app_network
+
   auth:
     build:
       context: ./auth
@@ -21,6 +42,8 @@ services:
       - "42022:42022"
     depends_on:
       - authDB
+    networks:
+      - app_network
   client:
     build:
       context: ./client
@@ -31,17 +54,17 @@ services:
     depends_on:
       - auth
       - predictor
+    networks:
+      - app_network
+
   predictor:
     build:
       context: ./predictor
       dockerfile: Dockerfile
     container_name: predictor_service
     ports:
-      - "42020:42020"
-
-
-
-
-
-
-
+      - "42020:5440"
+    depends_on:
+      - predictDB
+    networks:
+      - app_network

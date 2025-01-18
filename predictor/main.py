@@ -1,33 +1,52 @@
 from concurrent import futures
 import logging
 import grpc
-from proto_gen.predict import predict_pb2
-from proto_gen.predict import predict_pb2_grpc
+from app.services.db_manager import DBManager
+from proto_gen import predict_pb2_grpc
+from app.api.grpc.handlers import StonksPredictorHandler
+from app.utils.config_loader import Config
 
+from pathlib import Path
 
-class StonksPredictorServicer(predict_pb2_grpc.StonksPredictorServicer):
-    def Predictor(self, request, context) -> predict_pb2.PredictorResponse():
-        # Вот тут нужен вызов функции,которая возвращает предсказание в виде листа с данными
-
-        return predict_pb2.PredictorResponse(numbers=[12.0, 12.3])  # Пример
+SERVICE_PATH = Path(__file__).parent
 
 
 def main() -> None:
-    # Создание и настройка proto_gen сервера
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=5))
+    config_path = SERVICE_PATH / "config/config.yaml"
+    config_loader = Config(str(config_path))
 
-    # Регистрирация сервера, добавляя обработчик для gRPC
-    predict_pb2_grpc.add_StonksPredictorServicer_to_server(StonksPredictorServicer(), server)
+    try:
+        db_name = config_loader.get('database.name')
+        db_user = config_loader.get('database.user')
+        db_password = config_loader.get('database.password')
+        db_host = config_loader.get('database.host')
+        db_port = config_loader.get('database.port')
 
-    listen_addr = "[::]:42020"
+        server_port = config_loader.get('server.port', 42020)
+
+        db = DBManager(db_name, db_user, db_password, db_host, db_port)
+
+        logging.info("Connected to the database.")
+        db.create_tables()
+        logging.info("Tables were been created.")
+
+    except (FileNotFoundError, RuntimeError) as e:
+        logging.error("Error during initialization: %s", e)
+        return
+
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+
+    handler = StonksPredictorHandler(db)
+
+    predict_pb2_grpc.add_StonksPredictorServicer_to_server(handler, server)
+
+    listen_addr = f"[::]:{server_port}"
     server.add_insecure_port(listen_addr)
 
     logging.info("Starting server on %s", listen_addr)
 
-    server.start()
-
-    server.wait_for_termination()
-
+    server.start()  # Use `await` to ensure async server start
+    server.wait_for_termination()  # Wait for server termination async
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

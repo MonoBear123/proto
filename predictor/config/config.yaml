@@ -1,0 +1,12 @@
+database:
+  name: "predictdb"
+  user: "user"
+  password: "password"
+  port: 5432
+  host: "predictDB"
+
+server:
+  port: 42020
+
+logging:
+  level: "DEBUG"

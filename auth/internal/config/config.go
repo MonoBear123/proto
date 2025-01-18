@@ -25,21 +25,17 @@ type GRPCConfig struct {
 	Timeout time.Duration `yaml:"timeout"`
 }
 
-// MustLoadConfig - загружает конфигурацию из файла и возвращает структуру Config.
-// При возникновении ошибки вызывается panic.
 func MustLoadConfig() *Config {
 	path := ReadPath()
 
 	if path == "" {
 		panic("config path is empty")
 	}
-	// Проверка существования конфигурационного файла
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		panic("file does not exist")
 	}
 
 	var config Config
-	// Загрузка конфигурации из файла
 	if err := cleanenv.ReadConfig(path, &config); err != nil {
 		panic(err)
 	}
@@ -47,11 +43,9 @@ func MustLoadConfig() *Config {
 	return &config
 }
 
-// ReadPath - читает путь к конфигурационному файлу из аргументов командной строки или переменной окружения.
 func ReadPath() string {
 	var path string
 
-	// Определение флага для указания пути к файлу конфигурации
 	flag.StringVar(&path, "config", "", "path to config file")
 	flag.Parse()
 
