@@ -1,5 +1,4 @@
 import logging
-import os
 import requests
 from datetime import datetime, timedelta
 import numpy as np
@@ -34,7 +33,6 @@ class ModelTrainer():
             limit = 500
 
             while True:
-                logging.info("HERE")
                 response = requests.get(url, params=params)
                 if response.status_code != 200:
                     raise ConnectionError(f"Failed to fetch data: {response.status_code}")
@@ -98,13 +96,13 @@ class ModelTrainer():
             model.compile(optimizer=optimizer, loss=loss)
 
             model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size)
-            model_save_path = Path("/models") / f"{sec_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.keras"
+            model_dir = "/models"
+            if not os.path.exists(model_dir):
+                os.makedirs(model_dir, exist_ok=True)
 
-
-            if not model_save_path.parent.exists():
-                model_save_path.parent.mkdir(parents=True, exist_ok=True)
-
-            model.save(str(model_save_path))
+            model_save_path = os.path.join(model_dir, f"{sec_id}.keras")
+            model.save(model_save_path)
+            logging.info(model_save_path)
             return model, model_save_path
         except Exception as e:
             print(f"Error in get_fit_model: {e}")

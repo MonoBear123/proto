@@ -31,6 +31,8 @@ func (p *PredictHandler) Predict(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-
+	if len(res) == 1 {
+		return ctx.JSON(http.StatusOK, map[string]string{"message:": "Модель нахрдится на обучении "})
+	}
 	return ctx.JSON(http.StatusOK, map[string]interface{}{"result": res})
 }

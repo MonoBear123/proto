@@ -6,7 +6,7 @@ from proto_gen.predict_pb2 import PredictorResponse
 from app.services.db_manager import DBManager
 from app.services.model_trainer import ModelTrainer
 from app.services.predictor import Predictor
-
+TREANING_MODELS = []
 class StonksPredictorHandler(StonksPredictorServicer):
     def __init__(self, db_manager: DBManager):
         self.db_manager = db_manager
@@ -16,7 +16,8 @@ class StonksPredictorHandler(StonksPredictorServicer):
     def Predictor(self, request, context):
         sec_id = request.query
         logging.info(f"Received secid: {sec_id}")
-
+        if sec_id in TREANING_MODELS:
+            return PredictorResponse(numbers=[1])
         try:
             company_info = self.db_manager.get_company_info(sec_id)
             if company_info is None:
@@ -29,13 +30,16 @@ class StonksPredictorHandler(StonksPredictorServicer):
                     return PredictorResponse()
 
                 logging.info("Training the model...")
-                model, path = self.model_trainer.get_fit_model(data)
+                TREANING_MODELS.append(sec_id)
+                model, path = self.model_trainer.get_fit_model(data,sec_id=sec_id)
                 if model is None:
+                    TREANING_MODELS.remove(sec_id)
                     return PredictorResponse()
-
                 logging.info("Model training completed.")
-                prediction = self.predictor.predict_growth(model, None, data)
+                prediction = self.predictor.predict_growth(model, data)
+                logging.info(prediction)
                 self.db_manager.save_model_to_db(sec_id, path, prediction)
+                TREANING_MODELS.remove(sec_id)
                 return PredictorResponse(numbers=prediction)
 
             else:
