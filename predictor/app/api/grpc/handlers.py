@@ -6,7 +6,12 @@ from proto_gen.predict_pb2 import PredictorResponse
 from app.services.db_manager import DBManager
 from app.services.model_trainer import ModelTrainer
 from app.services.predictor import Predictor
+
+import traceback
+
 TREANING_MODELS = []
+
+
 class StonksPredictorHandler(StonksPredictorServicer):
     def __init__(self, db_manager: DBManager):
         self.db_manager = db_manager
@@ -19,7 +24,8 @@ class StonksPredictorHandler(StonksPredictorServicer):
         if sec_id in TREANING_MODELS:
             return PredictorResponse(numbers=[1])
         try:
-            company_info = self.db_manager.get_company_info(sec_id)
+            company_info  = self.db_manager.get_company_info(sec_id)
+            logging.info(company_info)
             if company_info is None:
                 logging.warning(f"secid '{sec_id}' not found in database.")
                 logging.info(f"Fetching data for secid '{sec_id}'...")
@@ -37,7 +43,6 @@ class StonksPredictorHandler(StonksPredictorServicer):
                     return PredictorResponse()
                 logging.info("Model training completed.")
                 prediction = self.predictor.predict_growth(model, data)
-                logging.info(prediction)
                 self.db_manager.save_model_to_db(sec_id, path, prediction)
                 TREANING_MODELS.remove(sec_id)
                 return PredictorResponse(numbers=prediction)
@@ -45,25 +50,24 @@ class StonksPredictorHandler(StonksPredictorServicer):
             else:
                 id, last_prediction_time = company_info
                 if last_prediction_time:
-                    last_prediction_time_obj = datetime.fromisoformat(last_prediction_time)
-                    time_diff = datetime.now() - last_prediction_time_obj
 
-                    if time_diff > timedelta(hours=4):
+                    time_diff = datetime.now() - last_prediction_time
+
+                    if time_diff > timedelta(minutes=2):
                         logging.info(f"Last prediction was {time_diff} ago. Refreshing dataset and making new prediction.")
                         data = self.model_trainer.get_dataset(sec_id)
                         if data is None:
                             return PredictorResponse()
-
-                        model_path = self.db_manager.get_model_path(sec_id)
-                        prediction = self.predictor.predict_growth(model_path, data)
+                        model = self.predictor.load_trained_model(sec_id=sec_id)
+                        prediction = self.predictor.predict_growth(model, data)
                         self.db_manager.insert_prediction(sec_id, prediction)
                         return PredictorResponse(numbers=prediction)
 
                     else:
                         logging.info(f"Last prediction was {time_diff} ago. Using previous prediction.")
-                        prediction = self.db_manager.get_predictions(id)
+                        prediction = self.db_manager.get_predictions(sec_id)
                         return PredictorResponse(numbers=prediction)
 
-        except Exception as e:
-            logging.error(f"Error during prediction for secid '{sec_id}': {e}")
+        except Exception as _:
+            logging.error(f"Error during prediction for secid '{sec_id}': {traceback.format_exc()}")
             return PredictorResponse()  # return empty result in case of error

@@ -66,5 +66,7 @@ services:
       - "42020:5440"
     depends_on:
       - predictDB
+    volumes:
+      - ./predictor/app/services/models:/app/app/services/models
     networks:
       - app_network
