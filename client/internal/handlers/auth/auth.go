@@ -26,7 +26,7 @@ func (a *AuthHandler) Login(ctx echo.Context) error {
 		Name:     "token",
 		Value:    token,
 		Path:     "/",
-		HttpOnly: true,
+		HttpOnly: false,
 	}
 	ctx.SetCookie(cookie)
 	return ctx.JSON(http.StatusOK, map[string]string{"message": "Token set successfully"})

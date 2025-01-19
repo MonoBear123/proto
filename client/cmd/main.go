@@ -26,18 +26,12 @@ func main() {
 	aHandler := authHandler.New(authGRPC)
 	pHandler := predictHandler.New(predictGRPC)
 	router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"http://localhost:63342", "https://127.0.0.1:5500"},
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
-		AllowHeaders:     []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		AllowHeaders:     []string{"Access-Control-Allow-Origin", echo.HeaderContentType, echo.HeaderAuthorization},
 		AllowCredentials: true,
 	}))
-	router.OPTIONS("/login", func(c echo.Context) error {
-		c.Response().Header().Set("Access-Control-Allow-Origin", "*")
-		c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Response().Header().Set("Access-Control-Allow-Methods", "POST")
-		c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		return c.NoContent(http.StatusOK)
-	})
+
 	router.POST("/predict", pHandler.Predict)
 	router.POST("/login", aHandler.Login, authHandler.ValidateDate)
 	router.POST("/register", aHandler.Register, authHandler.ValidateDate)
