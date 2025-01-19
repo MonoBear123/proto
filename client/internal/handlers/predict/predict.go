@@ -32,7 +32,10 @@ func (p *PredictHandler) Predict(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	if len(res) == 1 {
-		return ctx.JSON(http.StatusOK, map[string]string{"message:": "Модель нахрдится на обучении "})
+		return ctx.JSON(http.StatusOK, map[string]string{"message:": "Модель уже  находится на обучении, пожалуйста подождите "})
+	}
+	if len(res) == 2 {
+		return ctx.JSON(http.StatusOK, map[string]string{"message:": "Достигнуто максимальное количество одновременных обучений,пожалуйста подождите"})
 	}
 	return ctx.JSON(http.StatusOK, map[string]interface{}{"result": res})
 }

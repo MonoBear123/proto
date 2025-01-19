@@ -40,7 +40,7 @@ func (a *AuthHandler) Register(ctx echo.Context) error {
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	return ctx.JSON(http.StatusOK, map[string]string{"uid": string(uid)})
+	return ctx.JSON(http.StatusOK, map[string]int64{"uid": uid})
 }
 
 func ValidateDate(next echo.HandlerFunc) echo.HandlerFunc {

@@ -57,6 +57,8 @@ class DBManager:
         cursor.execute("SELECT prediction FROM predictions WHERE company_id = %s;", (company_id,))
         results = cursor.fetchall()
         logging.info(results)
+        logging.info(results[0][0])
+
         res = [float(row) for row in results[0][0]]
         logging.info(res)
         return res

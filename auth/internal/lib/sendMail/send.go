@@ -49,7 +49,7 @@ func SendMessagee(email, subject, token string) error {
 }
 
 func CreateBody(subject, token string) string {
-	link := "localhost:8080"
+	link := "185.112.102.43:8080"
 	body := VariotyBody[subject]
 	return fmt.Sprintf(body, link, token)
 

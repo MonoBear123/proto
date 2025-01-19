@@ -4,7 +4,7 @@ from keras.api.models import load_model
 from sklearn.preprocessing import StandardScaler
 import logging
 class Predictor:
-    def __init__(self, model_dir='models'):
+    def __init__(self, model_dir="app/services/models"):
         self.model_dir = model_dir
 
         self.stdsc = StandardScaler()
@@ -50,12 +50,19 @@ class Predictor:
             for _ in range(future_time):
                 prediction = model.predict(X)
                 future_predictions.append(prediction[0, 0])
-                new_prediction = np.array([[prediction[0, 0]]])
+                new_prediction = np.array([[[prediction[0, 0]]]])
                 X = np.append(X[:, 1:, :], new_prediction, axis=1)
             future_predictions = np.array(future_predictions).reshape(-1, 1)
             future_predictions = self.stdsc.inverse_transform(future_predictions)
-            future_predictions = future_predictions.tolist()
-            return future_predictions
+            flat_array = np.array(future_predictions).flatten()
+            flat_array = flat_array.tolist()
+            return flat_array
         except Exception as e:
             logging.error(f"Error in predict_growth: {e}")
             return None
+
+
+
+
+
+

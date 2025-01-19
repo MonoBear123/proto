@@ -96,7 +96,7 @@ class ModelTrainer():
             model.compile(optimizer=optimizer, loss=loss)
 
             model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size)
-            model_dir = "models"
+            model_dir = "app/services/models"
             if not os.path.exists(model_dir):
                 os.makedirs(model_dir, exist_ok=True)
 

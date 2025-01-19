@@ -10,6 +10,8 @@ import (
 	parser "client/internal/handlers/search"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"net/http"
+	"time"
 )
 
 func main() {
@@ -17,12 +19,18 @@ func main() {
 	router := echo.New()
 	router.Use(middleware.Logger())
 	authGRPC := grpcAuth.New("auth_service:42022")
+	time.Sleep(5 * time.Second)
 	predictGRPC := grpcPredict.New("predictor_service:42020")
 	manageGRPC := grpcManager.New("auth_service:42022")
 	mHandler := manageHandler.New(manageGRPC)
 	aHandler := authHandler.New(authGRPC)
 	pHandler := predictHandler.New(predictGRPC)
-
+	router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders:     []string{echo.HeaderContentType, echo.HeaderAuthorization},
+		AllowCredentials: true,
+	}))
 	router.POST("/predict", pHandler.Predict)
 	router.POST("/login", aHandler.Login, authHandler.ValidateDate)
 	router.POST("/register", aHandler.Register, authHandler.ValidateDate)

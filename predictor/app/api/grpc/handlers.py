@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-
+import  os
 from proto_gen.predict_pb2_grpc import StonksPredictorServicer
 from proto_gen.predict_pb2 import PredictorResponse
 from app.services.db_manager import DBManager
@@ -10,7 +10,7 @@ from app.services.predictor import Predictor
 import traceback
 
 TREANING_MODELS = []
-
+MAX_AMOUNT_MODELS = 5
 
 class StonksPredictorHandler(StonksPredictorServicer):
     def __init__(self, db_manager: DBManager):
@@ -27,6 +27,15 @@ class StonksPredictorHandler(StonksPredictorServicer):
             company_info  = self.db_manager.get_company_info(sec_id)
             logging.info(company_info)
             if company_info is None:
+                model_path = os.path.join(os.path.dirname(__file__), "../../services/models", f"{sec_id}.keras")
+                model_path = os.path.normpath(model_path)
+                if os.path.isfile(model_path):
+                    model = self.predictor.load_trained_model(sec_id=sec_id)
+                    data = self.model_trainer.get_dataset(sec_id)
+                    predict = self.predictor.predict_growth(model,data)
+                    self.db_manager.save_model_to_db(sec_id,model_path,predict)
+                    return PredictorResponse(numbers=predict)
+
                 logging.warning(f"secid '{sec_id}' not found in database.")
                 logging.info(f"Fetching data for secid '{sec_id}'...")
 
@@ -36,6 +45,8 @@ class StonksPredictorHandler(StonksPredictorServicer):
                     return PredictorResponse()
 
                 logging.info("Training the model...")
+                if len(TREANING_MODELS) == MAX_AMOUNT_MODELS:
+                    return PredictorResponse(numbers=[0,0])
                 TREANING_MODELS.append(sec_id)
                 model, path = self.model_trainer.get_fit_model(data,sec_id=sec_id)
                 if model is None:
@@ -53,7 +64,7 @@ class StonksPredictorHandler(StonksPredictorServicer):
 
                     time_diff = datetime.now() - last_prediction_time
 
-                    if time_diff > timedelta(minutes=2):
+                    if time_diff > timedelta(hours=4):
                         logging.info(f"Last prediction was {time_diff} ago. Refreshing dataset and making new prediction.")
                         data = self.model_trainer.get_dataset(sec_id)
                         if data is None:
@@ -70,4 +81,3 @@ class StonksPredictorHandler(StonksPredictorServicer):
 
         except Exception as _:
             logging.error(f"Error during prediction for secid '{sec_id}': {traceback.format_exc()}")
-            return PredictorResponse()  # return empty result in case of error
