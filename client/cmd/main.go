@@ -32,9 +32,12 @@ func main() {
 		AllowCredentials: true,
 	}))
 	router.OPTIONS("/login", func(c echo.Context) error {
+		c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+		c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Response().Header().Set("Access-Control-Allow-Methods", "POST")
+		c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		return c.NoContent(http.StatusOK)
 	})
-
 	router.POST("/predict", pHandler.Predict)
 	router.POST("/login", aHandler.Login, authHandler.ValidateDate)
 	router.POST("/register", aHandler.Register, authHandler.ValidateDate)
