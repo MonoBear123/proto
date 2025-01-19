@@ -22,14 +22,7 @@ func (a *AuthHandler) Login(ctx echo.Context) error {
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	cookie := &http.Cookie{
-		Name:     "token",
-		Value:    token,
-		Path:     "/",
-		HttpOnly: false,
-	}
-	ctx.SetCookie(cookie)
-	return ctx.JSON(http.StatusOK, map[string]string{"message": "Token set successfully"})
+	return ctx.JSON(http.StatusOK, map[string]string{"message": "Token set successfully", "token": token})
 }
 
 func (a *AuthHandler) Register(ctx echo.Context) error {
