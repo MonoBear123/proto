@@ -31,6 +31,10 @@ func main() {
 		AllowHeaders:     []string{echo.HeaderContentType, echo.HeaderAuthorization},
 		AllowCredentials: true,
 	}))
+	router.OPTIONS("/login", func(c echo.Context) error {
+		return c.NoContent(http.StatusOK)
+	})
+
 	router.POST("/predict", pHandler.Predict)
 	router.POST("/login", aHandler.Login, authHandler.ValidateDate)
 	router.POST("/register", aHandler.Register, authHandler.ValidateDate)
