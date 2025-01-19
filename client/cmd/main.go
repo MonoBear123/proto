@@ -26,7 +26,7 @@ func main() {
 	aHandler := authHandler.New(authGRPC)
 	pHandler := predictHandler.New(predictGRPC)
 	router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:63342", "http://localhost:5500", "http://localhost:8000"},
+		AllowOrigins:     []string{"http://localhost:63342", "http://127.0.0.1:5500", "http://127.0.0.1:8000"},
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", echo.HeaderContentType, echo.HeaderAuthorization},
 		AllowCredentials: true,
