@@ -70,3 +70,13 @@ services:
       - ./predictor/app/services/models:/app/app/services/models
     networks:
       - app_network
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    volumes:
+      - ./front:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+    restart: unless-stopped

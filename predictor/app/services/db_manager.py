@@ -56,11 +56,8 @@ class DBManager:
         cursor = self.conn.cursor()
         cursor.execute("SELECT prediction FROM predictions WHERE company_id = %s;", (company_id,))
         results = cursor.fetchall()
-        logging.info(results)
-        logging.info(results[0][0])
 
         res = [float(row) for row in results[0][0]]
-        logging.info(res)
         return res
 
     def save_model_to_db(self, company_id: str, model_path: str, prediction: list):
@@ -73,7 +70,6 @@ class DBManager:
         VALUES (%s, %s, %s, %s, %s)
         """, (company_id, model_path, prediction, last_trained, last_prediction))
             self.conn.commit()
-            logging.info("save model",company_id,model_path,last_prediction)
         except Exception as e:
             logging.error(f"Error during database operation: {e}")
             self.conn.rollback()

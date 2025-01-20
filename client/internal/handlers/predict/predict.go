@@ -18,12 +18,9 @@ func New(client *grpcPredict.PredictClient) *PredictHandler {
 }
 
 func (p *PredictHandler) Predict(ctx echo.Context) error {
-	cookie, err := ctx.Cookie("token")
-	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
-	}
+	token := ctx.FormValue("token")
 
-	if err := parseJWT.ParseToken(cookie.Value); err != nil {
+	if err := parseJWT.ParseToken(token); err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 	}
 	secid := ctx.FormValue("secid")
