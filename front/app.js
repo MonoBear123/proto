@@ -1,4 +1,4 @@
-BASE_URL = "http://185.112.102.43:8080"
+BASE_URL = "http://client:8080"
 
 // Навигация по кнопкам на главной странице
 document.getElementById('btnLogin')?.addEventListener('click', () => {
