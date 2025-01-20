@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login Request</title>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const login = async () => {
+        const email = "sakovic001@gmail.com";
+        const password = "sakovich2006";
+        const sec_id = "SBER"
+
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("password", password);
+
+        try {
+            const {data} = await axios.post("http://185.112.102.43:8080/login",formData)
+
+
+            console.log(data)
+        } catch (error) {
+            console.error("Ошибка во время запроса:", error);
+        }
+    };
+
+    login();
+</script>
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>
