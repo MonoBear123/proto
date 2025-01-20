@@ -1,4 +1,4 @@
-BASE_URL = "http://localhost:8080"
+BASE_URL = "http://client:8080"
 
 // Навигация по кнопкам на главной странице
 document.getElementById('btnLogin')?.addEventListener('click', () => {
@@ -100,7 +100,7 @@ if (resultText) {
 
     if (secId) {
         const formSec = new FormData();
-        formSec.append("secid", "SBER"); //secId
+        formSec.append("secid", secId);
         formSec.append("token", token);
 
         axios.post(BASE_URL + '/predict', formSec)
