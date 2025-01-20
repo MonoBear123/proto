@@ -76,7 +76,7 @@ services:
     volumes:
       - ./front:/usr/share/nginx/html
     ports:
-      - "80:80"
+      - "3000:80"
     networks:
       - app_network
     restart: unless-stopped
